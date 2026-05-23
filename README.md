@@ -1,37 +1,76 @@
-## **MovieQuiz**
+# MovieQuiz App
 
-MovieQuiz - это приложение с квизами о фильмах из топ-250 рейтинга и самых популярных фильмах по версии IMDb.
-
-## **Ссылки**
-
-[Макет Figma](https://www.figma.com/design/wjLUZUID3eizsbYd616EUD/YP-Quiz)
+An interactive iOS quiz app that tests your knowledge of movies from the IMDb Top-250 list.  
+The app presents 10 questions per round about movie ratings, provides instant visual feedback, and tracks detailed statistics to help you beat your own records.
 
 [API IMDb](https://tv-api.com/api#Top250Movies-header)
 
-[Шрифты](https://code.s3.yandex.net/Mobile/iOS/Fonts/MovieQuizFonts.zip)
+[Figma mockup](https://www.figma.com/design/wjLUZUID3eizsbYd616EUD/YP-Quiz)
 
-## **Описание приложения**
+## Screenshots
 
-- Одностраничное приложение с квизами о фильмах из топ-250 рейтинга и самых популярных фильмов IMDb. Пользователь приложения последовательно отвечает на вопросы о рейтинге фильма. По итогам каждого раунда игры показывается статистика о количестве правильных ответов и лучших результатах пользователя. Цель игры — правильно ответить на все 10 вопросов раунда.
+<img width="1300" height="782" alt="Image" src="https://github.com/user-attachments/assets/e73ebc9d-332b-48ae-a1e0-32f51f12ca7e" />
 
- ![Image](https://github.com/user-attachments/assets/840fba20-6a43-42a8-b791-aea4b1af0acf)
+## Features
 
-## **Функциональные требования**
+- **Registration Screen:** Users must enter valid data before starting the quiz. The username is cached locally using `UserDefaults`.
+- **Quiz Logic:** Each round consists of 10 questions. A typical question: "Is this movie's rating higher than 6?" (based on IMDb's 10-point scale).
+- **True/False Answers:** Only one correct answer per question.
+- **Instant Visual Feedback:** After answering, the photo frame border changes color (green for correct, red for incorrect) to provide immediate feedback.
+- **Automatic Question Flow:** The next question appears automatically 1 second after an answer is selected.
+- **Statistics Tracking:** After each round, an alert shows:
+    - Current round result (e.g., 8/10 correct)
+    - Total number of quizzes played
+    - Record (best round result with date and time)
+    - Average accuracy across all played quizzes
+- **Play Again:** Users can start a new round directly from the final alert.
+- **Error Handling:** If data loading fails, an alert with a retry button is shown to repeat the network request.
 
-- При запуске приложения показывается сплеш-скрин
-- После запуска показывается экран регистрации. Регистрация не может быть завершена, пока данные не будут валидны
-- Если данные валидны, то происходит переход на «Главный экран» приложения. Имя пользователя кэшируется в локальное хранилище UserDefaults
-- После показывается экран вопроса с текстом вопроса, картинкой и двумя вариантами ответа, “Да” и “Нет”, только один из них правильный
-- Вопрос квиза составляется относительно IMDb рейтинга фильма по 10-балльной шкале, например: "Рейтинг этого фильма больше 6?"
-- Можно нажать на один из вариантов ответа на вопрос и получить отклик о том, правильный он или нет, при этом рамка фотографии поменяет цвет на соответствующий
-- После выбора ответа на вопрос через 1 секунду автоматически появляется следующий вопрос
-- После завершения раунда из 10 вопросов появляется алерт со статистикой пользователя и возможностью сыграть ещё раз
-- Статистика содержит: результат текущего раунда (количество правильных ответов из 10 вопросов), количество сыгранных квизов, рекорд (лучший результат раунда за сессию, дата и время этого раунда), статистику сыгранных квизов в процентном соотношении (среднюю точность)
-- Пользователь может запустить новый раунд, нажав в алерте на кнопку "Сыграть еще раз"
-- При невозможности загрузить данные пользователь видит алерт с сообщением о том, что что-то пошло не так, а также кнопкой, по нажатию на которую можно повторить сетевой запрос
+## Tech Stack
 
-## **Технические требования**
+- **UIKit** for all interface elements
+- **UserDefaults** for caching user data and quiz statistics
+- **URLSession** for networking
+- **REST API** integration (IMDb API)
+- **MVP** architecture
+- **Unit Tests** for business logic
+- **Splash Screen** on app launch
 
-- Приложение должно поддерживать устройства iPhone с iOS 13, предусмотрен только портретный режим
-- Элементы интерфейса адаптируются под разрешения экранов iPhone, начиная с X — вёрстка под SE и iPad не предусмотрена
-- Экраны соответствует макету — использованы верные шрифты нужных размеров, все надписи находятся на нужном месте, расположение всех элементов, размеры кнопок и отступы — точно такие же, как в макете
+## Architecture
+
+The project follows the **MVP (Model-View-Presenter)** architecture pattern:
+
+- **Model:** Data structures for questions, user profile, and quiz statistics.
+- **View:** UIKit-based views and ViewControllers. Displays data and passes user actions to the Presenter.
+- **Presenter:** Contains all business logic. Handles question flow, answer validation, statistics calculation, and data formatting. Isolated from UIKit, making it easy to test.
+
+## Testing
+
+The project includes **Unit Tests** that cover the Presenter's business logic:
+
+- Question loading and validation
+- Answer processing and score calculation
+- Statistics update logic (best result, accuracy percentage)
+- Quiz flow state management
+- Network error handling
+
+Tests use mocked services to isolate the Presenter and ensure reliable, repeatable results.
+
+## Key Implementation Details
+
+- **Splash Screen:** A launch screen is shown while the app is starting up.
+- **Registration Validation:** Input is validated before allowing the user to proceed to the main quiz screen.
+- **UserDefaults Caching:** The entered username is saved locally using `UserDefaults`, so it persists between app launches.
+- **Question Flow:** After an answer is selected, a 1-second timer automatically triggers the next question. The UI is blocked during this short delay to prevent multiple answers.
+- **Visual Feedback:** The photo frame border color changes instantly based on the answer's correctness, providing a clear user experience.
+- **Statistics Calculation:** The app calculates and stores:
+    - Total number of played quizzes
+    - Best round result with timestamp
+    - Average accuracy percentage across all rounds
+- **Error Handling:** Network failures are caught, and a user-friendly alert with a retry option is displayed.
+
+## Installation
+
+- git clone https://github.com/rfhfv/MovieQuiz.git
+- cd MovieQuiz
+- open MovieQuiz.xcodeproj
